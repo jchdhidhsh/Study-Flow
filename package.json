@@ -1,0 +1,27 @@
+{
+  "name": "study-flow",
+  "version": "1.0.0",
+  "description": "面向学生的个人学习任务管理系统",
+  "main": "src/interfaces/server.js",
+  "scripts": {
+    "start": "node src/interfaces/server.js",
+    "dev": "nodemon src/interfaces/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "study",
+    "task",
+    "management"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2"
+  }
+}
