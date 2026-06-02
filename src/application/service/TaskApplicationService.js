@@ -5,16 +5,28 @@ class TaskApplicationService {
   }
 
   async createTask(command) {
-    const { name, description, taskListId, dueDate, priority } = command;
-    const taskList = await this.taskListRepository.findById(taskListId);
-    if (!taskList) {
-      throw new Error('指定的清单不存在');
+    const { userId, title, priority, dueDate, taskListId } = command;
+
+    if (!userId || userId.trim() === '') {
+      throw new Error('userId 不能为空');
     }
+    if (!title || title.trim() === '') {
+      throw new Error('title 不能为空');
+    }
+    if (!priority || !['HIGH', 'MEDIUM', 'LOW'].includes(priority.level)) {
+      throw new Error('priority 必须为合法枚举值');
+    }
+    const now = new Date();
+    if (dueDate < now) {
+      throw new Error('dueDate 不能早于当前时间');
+    }
+
     const task = {
-      id: Date.now(),
-      name,
-      description,
-      taskListId,
+      id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      userId,
+      title,
+      status: { state: 'PENDING', label: '待办' },
+      priority,
       dueDate: new Date(dueDate),
     };
     return this.taskRepository.save(task);
@@ -36,6 +48,37 @@ class TaskApplicationService {
     }
     task.status = newStatus;
     return this.taskRepository.save(task);
+  }
+
+  async completeTask(taskId) {
+    if (!taskId || taskId.trim() === '') {
+      throw new Error('taskId 不能为空');
+    }
+    const task = await this.taskRepository.findById(taskId);
+    if (!task) {
+      throw new Error('任务不存在');
+    }
+    if (task.status.state !== 'COMPLETED') {
+      task.status = { state: 'COMPLETED', label: '已完成' };
+      task.completedAt = new Date();
+      return this.taskRepository.save(task);
+    }
+    return task;
+  }
+
+  async listTasksByPriority(userId) {
+    if (!userId || userId.trim() === '') {
+      throw new Error('userId 不能为空');
+    }
+    const tasks = await this.taskRepository.findByUserId(userId);
+    return tasks.sort((a, b) => a.priority.order - b.priority.order);
+  }
+
+  async listDueTasks(date) {
+    if (date === null || date === undefined) {
+      throw new Error('date 不能为空');
+    }
+    return this.taskRepository.findByDueDateBefore(date);
   }
 
   async deleteTask(id) {
