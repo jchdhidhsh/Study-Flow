@@ -43,6 +43,23 @@ class Task extends BaseEntity {
   isOverdue() {
     return this.status.state !== 'COMPLETED' && this.status.state !== 'CANCELLED' && new Date() > this.dueDate;
   }
+
+  /**
+   * 完成任务 - 状态模式方法
+   * 幂等性：已完成的任务再次调用不会报错
+   * @returns {Task} 返回自身，支持链式调用
+   */
+  complete() {
+    if (this.status.state === 'CANCELLED') {
+      throw new Error('已取消的任务不可完成');
+    }
+    if (this.status.state !== 'COMPLETED') {
+      this.status = TaskStatus.COMPLETED;
+      this.completedAt = new Date();
+      this.updatedAt = new Date();
+    }
+    return this;
+  }
 }
 
 module.exports = Task;
