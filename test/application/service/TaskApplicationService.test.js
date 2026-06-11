@@ -50,15 +50,30 @@ function createTaskList(id = 'list-1') {
 }
 
 function createTask(overrides = {}) {
-  return {
+  const task = {
     id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     userId: 'user-1',
     title: '测试任务',
-    status: TaskStatus.PENDING,
-    priority: TaskPriority.MEDIUM,
+    status: { ...TaskStatus.PENDING },
+    priority: { ...TaskPriority.MEDIUM },
     dueDate: new Date(Date.now() + 86400000),
     ...overrides,
   };
+  
+  // 添加 complete 方法（状态模式）
+  task.complete = function() {
+    if (this.status.state === 'CANCELLED') {
+      throw new Error('已取消的任务不可完成');
+    }
+    if (this.status.state !== 'COMPLETED') {
+      this.status = { ...TaskStatus.COMPLETED };
+      this.completedAt = new Date();
+      this.updatedAt = new Date();
+    }
+    return this;
+  };
+  
+  return task;
 }
 
 describe('TaskApplicationService', () => {

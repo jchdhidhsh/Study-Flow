@@ -45,14 +45,15 @@ class Task extends BaseEntity {
   }
 
   /**
-   * 完成任务 - 状态模式方法
-   * 幂等性：已完成的任务再次调用不会报错
-   * @returns {Task} 返回自身，支持链式调用
+   * 完成任务（状态模式方法）
+   * @returns {Task} 返回自身以支持链式调用
+   * @throws {Error} 已取消的任务不可完成
    */
   complete() {
     if (this.status.state === 'CANCELLED') {
       throw new Error('已取消的任务不可完成');
     }
+    // 幂等性：已完成的任务再次调用不报错
     if (this.status.state !== 'COMPLETED') {
       this.status = TaskStatus.COMPLETED;
       this.completedAt = new Date();

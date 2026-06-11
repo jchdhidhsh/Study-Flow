@@ -1,4 +1,6 @@
-const TaskList = require('../../../src/domain/model/entity/TaskList');
+const path = require('path');
+const ROOT_DIR = 'D:\\vscode\\Study-Flow';
+const TaskList = require(path.join(ROOT_DIR, 'src/domain/model/entity/TaskList'));
 
 describe('TaskList 领域实体测试', () => {
   test('创建清单时属性正确', () => {

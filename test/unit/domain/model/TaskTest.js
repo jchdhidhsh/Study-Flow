@@ -1,6 +1,8 @@
-const Task = require('../../../src/domain/model/entity/Task');
-const TaskStatus = require('../../../src/domain/model/vo/TaskStatus');
-const Priority = require('../../../src/domain/model/vo/Priority');
+const path = require('path');
+const ROOT_DIR = 'D:\\vscode\\Study-Flow';
+const Task = require(path.join(ROOT_DIR, 'src/domain/model/entity/Task'));
+const TaskStatus = require(path.join(ROOT_DIR, 'src/domain/model/vo/TaskStatus'));
+const Priority = require(path.join(ROOT_DIR, 'src/domain/model/vo/Priority'));
 
 describe('Task 领域实体测试', () => {
   let task;
