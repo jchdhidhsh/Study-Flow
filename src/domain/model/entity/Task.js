@@ -4,6 +4,9 @@ const Priority = require('../vo/Priority');
 
 class Task extends BaseEntity {
   constructor({ id, name, description, taskListId, dueDate }) {
+    if (!id) {
+      throw new Error('实体 ID 不能为空');
+    }
     super(id);
     this.name = name;
     this.description = description || '';
